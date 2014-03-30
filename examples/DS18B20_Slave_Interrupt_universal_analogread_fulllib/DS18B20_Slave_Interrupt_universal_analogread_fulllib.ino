@@ -28,7 +28,6 @@ void setup() {
 //  }
   pinMode(ledPin, OUTPUT);
   ds.init(rom);
-  //ds.init2(rom, dsslavepin);
   ds.setScratchpad(scratchpad);
   ds.setPower(PARASITE);
   ds.setResolution(9);
