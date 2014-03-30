@@ -10,7 +10,7 @@
 #include "pins_arduino.h"  // for digitalPinToBitMask, etc
 #endif
 
-#if defined(__SAM3X8E__) || defined(__MK20DX128__) || defined(__PIC32MX__)
+#if defined(__SAM3X8E__) || defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__PIC32MX__)
 #define lowmark   325
 #define highmark  500
 #define dsslaveassignedint dsslavepin
@@ -165,7 +165,7 @@
 #define DIRECT_WRITE_LOW(base, mask)    ((*((base)+2)) &= ~(mask))
 #define DIRECT_WRITE_HIGH(base, mask)   ((*((base)+2)) |= (mask))
 
-#elif defined(__MK20DX128__)
+#elif defined(__MK20DX128__) || defined(__MK20DX256__)
 #define PIN_TO_BASEREG(pin)             (portOutputRegister(pin))
 #define PIN_TO_BITMASK(pin)             (1)
 #define IO_REG_TYPE uint8_t
