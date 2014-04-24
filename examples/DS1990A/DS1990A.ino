@@ -1,5 +1,4 @@
- //#include "WProgram.h"
- #include "OneWireSlave.h"
+#include "OneWireSlave.h"
  
 unsigned char rom[8] = {0x28, 0xAD, 0xDA, 0xCE, 0x0F, 0x00, 0x11, 0x00};
 
@@ -10,7 +9,7 @@ unsigned char scratchpad[10] = {0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 
 OneWireSlave ds(2);
  
 void setup() {
-  ds.setRom(rom);
+  ds.init(rom);
 }
  
 void loop() {
