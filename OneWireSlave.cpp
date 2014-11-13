@@ -109,15 +109,15 @@ bool OneWireSlave::owsprint() {
 	volatile IO_REG_TYPE *reg IO_REG_ASM = PIN_TO_BASEREG(_pin);
 
   errno = ONEWIRE_NO_ERROR;
-  cli();
+  noInterrupts();
   DIRECT_WRITE_LOW(reg, mask);
   DIRECT_MODE_OUTPUT(reg, mask);    // drive output low
-  sei();
+  interrupts();
 
   delayMicroseconds(125);
-  cli();
+  noInterrupts();
   DIRECT_MODE_INPUT(reg, mask);     // allow it to float
-  sei();
+  interrupts();
 
   delayMicroseconds(300 - 50);
   
@@ -395,9 +395,9 @@ bool OneWireSlave::waitReset(uint16_t timeout_ms) {
   unsigned long time_stamp;
 
   errno = ONEWIRE_NO_ERROR;
-  cli();
+  noInterrupts();
   DIRECT_MODE_INPUT(reg, mask);
-  sei();
+  interrupts();
 
   //Wait for the line to fall
   if (timeout_ms != 0) {
@@ -456,17 +456,17 @@ bool OneWireSlave::presence(uint8_t delta) {
   // Master will not read until 70 recommended, but could read as early as 60
   // so we should be well enough ahead of that. Arduino waits 65
   errno = ONEWIRE_NO_ERROR;
-  cli();
+  noInterrupts();
   DIRECT_WRITE_LOW(reg, mask);
   DIRECT_MODE_OUTPUT(reg, mask);    // drive output low
-  sei();
+  interrupts();
 
   //Delaying for another 125 (orignal was 120) with the line set low is a total of at least 155 micros
   // total since reset high depends on commands done prior, is technically a little longer
   delayMicroseconds(125);
-  cli();
+  noInterrupts();
   DIRECT_MODE_INPUT(reg, mask);     // allow it to float
-  sei();
+  interrupts();
 
   //Default "delta" is 25, so this is 275 in that condition, totaling to 155+275=430 since the reset rise
   // docs call for a total of 480 possible from start of rise before reset timing is completed
@@ -542,7 +542,7 @@ void OneWireSlave::sendBit(uint8_t v) {
 	volatile IO_REG_TYPE *reg IO_REG_ASM = baseReg;
 	//volatile IO_REG_TYPE *reg IO_REG_ASM = PIN_TO_BASEREG(_pin);
 
-  cli();
+  noInterrupts();
   DIRECT_MODE_INPUT(reg, mask);
   //waitTimeSlot waits for a low to high transition followed by a high to low within the time-out
   uint8_t wt = waitTimeSlot();
@@ -552,20 +552,20 @@ void OneWireSlave::sendBit(uint8_t v) {
     } else {
       errno = ONEWIRE_READ_TIMESLOT_TIMEOUT_HIGH;
     }
-    sei();
+    interrupts();
     return;
   }
   if (v & 1)
     delayMicroseconds(30);
   else {
-  	cli();
+  	noInterrupts();
     DIRECT_WRITE_LOW(reg, mask);
     DIRECT_MODE_OUTPUT(reg, mask);
     delayMicroseconds(30);
     DIRECT_WRITE_HIGH(reg, mask);
-    sei();
+    interrupts();
   }
-  sei();
+  interrupts();
   return;
 }
 
@@ -575,7 +575,7 @@ uint8_t OneWireSlave::recvBit(void) {
 	//volatile IO_REG_TYPE *reg IO_REG_ASM = PIN_TO_BASEREG(_pin);
   uint8_t r;
 
-  cli();
+  noInterrupts();
   DIRECT_MODE_INPUT(reg, mask);
   //waitTimeSlotRead is a customized version of the original which was also
   // used by the "write" side of things.
@@ -586,13 +586,13 @@ uint8_t OneWireSlave::recvBit(void) {
     } else {
       errno = ONEWIRE_READ_TIMESLOT_TIMEOUT_HIGH;
     }
-    sei();
+    interrupts();
     return 0;
   }
   delayMicroseconds(30);
   //TODO Consider reading earlier: delayMicroseconds(15);
   r = DIRECT_READ(reg, mask);
-  sei();
+  interrupts();
   return r;
 }
 
