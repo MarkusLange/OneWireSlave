@@ -31,7 +31,7 @@ void setup() {
   ds.setScratchpad(scratchpad);
   ds.setPower(PARASITE);
   ds.setResolution(9);
-  attachInterrupt(12, DS18B20, CHANGE);
+  attachInterrupt(12, DS18B20_1, CHANGE);
   value = -55;
   ds.attach44h(temper);
 }
@@ -52,7 +52,7 @@ void temper() {
   ds.setTemperature(scratchpadtemperature);
 }
 
-void DS18B20() {
+void DS18B20_1() {
   //Serial.println("1st Step");
   old_previousmicros = previousmicros;
   previousmicros = micros();
